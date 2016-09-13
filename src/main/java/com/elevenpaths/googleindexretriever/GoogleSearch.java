@@ -134,6 +134,12 @@ public class GoogleSearch {
                 referer = response.url().toString();
                 idCaptcha = getIDCaptcha(response.parse());
 
+                new JFXPanel();
+                Platform.runLater( () -> {
+                    WebView webView = new WebView();
+                    webView.getEngine();
+                });
+
                 getCaptcha("https://ipv4.google.com/sorry/image?id=" + idCaptcha + "&hl=es&" + referer.substring(referer.indexOf('?')+1));
 
                 throw new CaptchaException();
@@ -221,7 +227,6 @@ public class GoogleSearch {
             con.setRequestProperty("Referer", referer);
             //con.connect();
             boolean redirect = false;
-            con.setInstanceFollowRedirects(false);
             int status = con.getResponseCode();
 
             if (status != HttpURLConnection.HTTP_OK) {
