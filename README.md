@@ -1,4 +1,4 @@
-# GoogleIndexRetriever
+# Google index Retriever
 
 Have you ever found a webpage that seems to talk exactly about what you need, but it has been removed? Yes, Google cache is the answer but... What if the cache has been removed too? What if the site is just in Google Index page? You can not get the webpage back, zb>but you know it was there</b>. 
 
