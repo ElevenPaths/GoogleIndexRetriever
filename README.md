@@ -1,6 +1,6 @@
 # Google index Retriever
 
-Have you ever found a webpage that seems to talk exactly about what you need, but it has been removed? Yes, Google cache is the answer but... What if the cache has been removed too? What if the site is just in Google Index page? You can not get the webpage back, zb>but you know it was there</b>. 
+Have you ever found a webpage that seems to talk exactly about what you need, but it has been removed? Yes, Google cache is the answer but... What if the cache has been removed too? What if the site is just in Google Index page? You can not get the webpage back, <b>but you know it was there</b>. 
 
 <b>Google Index Retriever</b> will try to retrieve back the index in Google, so you can get part of the text back, and maybe that removed content you need. Google cache is not there forever. From time to time, they are just removed for good. [Archive.org](https://archive.org/) and its WayBackMachine does not take as many snapshots of the less popular pages... so, there are some situations where the only part of a web that is left is in the Google Index.
 
