@@ -5,6 +5,12 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import com.elevenpaths.googleindexretriever.exceptions.EmptyQueryException;
+import com.elevenpaths.googleindexretriever.process.KeyWordsProcess;
+import com.elevenpaths.googleindexretriever.process.MakeShotProcess;
+import com.elevenpaths.googleindexretriever.process.MakeShotSpamProcess;
+import com.elevenpaths.googleindexretriever.process.Observer;
+import com.elevenpaths.googleindexretriever.process.SpamProcess;
+
 import org.jsoup.Jsoup;
 //import org.w3c.dom.Document;
 import org.jsoup.nodes.Document;
@@ -20,6 +26,7 @@ import org.jsoup.helper.W3CDom;
 /**
  * The Class GoogleSearch.
  */
+@SuppressWarnings("restriction")
 public class GoogleSearch {
 
 	/** The Constant CAPTCHA. */

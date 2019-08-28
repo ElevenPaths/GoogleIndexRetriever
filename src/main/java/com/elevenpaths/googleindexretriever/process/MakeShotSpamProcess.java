@@ -1,65 +1,62 @@
-package com.elevenpaths.googleindexretriever;
+package com.elevenpaths.googleindexretriever.process;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.jsoup.nodes.Element;
+
+import com.elevenpaths.googleindexretriever.Control;
+import com.elevenpaths.googleindexretriever.GoogleSearch;
 import com.elevenpaths.googleindexretriever.exceptions.EmptyQueryException;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import java.util.concurrent.TimeUnit;
 
 /**
- * The Class SpamProcess.
+ * The Class MakeShotSpamProcess.
  */
-public class SpamProcess extends Observer implements Runnable {
+@SuppressWarnings("restriction")
+public class MakeShotSpamProcess extends Observer implements Runnable {
 
 	/** The thread. */
 	private Thread thread;
 
-	/** The start time. */
-	private final long startTime;
-
 	/** The control. */
 	private final Control control;
-
-	/** The gs. */
-	private final GoogleSearch gs;
 
 	/** The query. */
 	private final String query;
 
-	/** The spam keywords list. */
-	private final ArrayList<String> spamKeywordsList;
+	/** The gs. */
+	private final GoogleSearch gs;
 
 	/** The that. */
-	private final SpamProcess that;
+	private final MakeShotSpamProcess that;
 
 	/** The message queue. */
 	private final BlockingQueue<String> messageQueue;
 
+	/** The start time. */
+	private final long startTime;
+
 	/**
-	 * Instantiates a new spam process.
+	 * Instantiates a new make shot spam process.
 	 *
 	 * @param control the control
 	 * @param gs the gs
 	 * @param query the query
-	 * @param keywords the keywords
-	 * @param useKeywords the use keywords
 	 */
-	public SpamProcess(final Control control, final GoogleSearch gs, final String query,
-			final ArrayList<String> keywords, final boolean useKeywords) {
+	public MakeShotSpamProcess(final Control control, final GoogleSearch gs, final String query) {
 		this.control = control;
 		this.gs = gs;
 		this.query = query;
+
 		startTime = System.nanoTime();
-		spamKeywordsList = keywords;
+
 		that = this;
 
 		messageQueue = new ArrayBlockingQueue<>(1);
@@ -75,7 +72,6 @@ public class SpamProcess extends Observer implements Runnable {
 				if (now - lastUpdate.get() > minUpdateInterval) {
 					final String message = messageQueue.poll();
 					if (message != null) {
-
 						try {
 							gs.setQuery(message, that);
 						} catch (final UnsupportedEncodingException e) {
@@ -110,6 +106,7 @@ public class SpamProcess extends Observer implements Runnable {
 		};
 
 		timer.start();
+
 	}
 
 	/*
@@ -119,46 +116,41 @@ public class SpamProcess extends Observer implements Runnable {
 	 */
 	@Override
 	public void run() {
-		final ArrayDeque<String> wordsSpamQueue = new ArrayDeque<String>();
-		wordsSpamQueue.addAll(gs.getSpamKeywords());
-		String wordQueue = "";
-		if (wordsSpamQueue != null) {
-			do {
-				try {
 
-					semaphore = false;
+		try {
 
-					wordQueue = wordsSpamQueue.pop();
+			semaphore = false;
 
-					control.setPathProgressBar(query + " \"" + wordQueue + "\"");
+			final String message = query;
+			messageQueue.put(message);
 
-					final String message = query + " \"" + wordQueue + "\"";
-					messageQueue.put(message);
+			while (semaphore == false) {
+				Thread.sleep(1000);
+			}
 
-					while (semaphore == false) {
-						Thread.sleep(1000);
-					}
+			// Successful request
+			final String time = control
+					.calcHMS((int) TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS));
+			control.setElepased(time);
+			for (final Element e : elements) {
+				control.addList(time, "", e.text());
+			}
 
-					// Thread.sleep(5000);
-
-					// Successful request
-					final String time = control.calcHMS(
-							(int) TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS));
-					control.setElepased(time);
-					for (final Element e : elements) {
-						control.addList(time, wordQueue, e.text());
-					}
-				} catch (final InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			} while (!stop && !wordsSpamQueue.isEmpty());
-
+		} catch (final InterruptedException e) {
+			e.printStackTrace();
 		}
 
 		control.stop();
 
+	}
+
+	/**
+	 * Sets the result query.
+	 *
+	 * @param result the new result query
+	 */
+	public void setResultQuery(final String result) {
+		this.result = result;
 	}
 
 	/**
@@ -167,7 +159,7 @@ public class SpamProcess extends Observer implements Runnable {
 	public void start() {
 		// System.out.println("Starting " + threadName );
 		if (thread == null) {
-			thread = new Thread(this, "spam");
+			thread = new Thread(this, "makeShotProcces");
 			thread.start();
 		}
 	}

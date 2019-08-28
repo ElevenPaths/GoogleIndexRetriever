@@ -15,6 +15,7 @@ import javafx.scene.control.Tooltip;
 /**
  * The Class Navigator.
  */
+@SuppressWarnings("restriction")
 public class Navigator extends HBox {
 
 	/** The page url. */

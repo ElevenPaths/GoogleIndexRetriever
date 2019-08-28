@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import com.elevenpaths.googleindexretriever.process.KeyWordsProcess;
+import com.elevenpaths.googleindexretriever.process.MakeShotProcess;
+import com.elevenpaths.googleindexretriever.process.MakeShotSpamProcess;
+import com.elevenpaths.googleindexretriever.process.SpamProcess;
+
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -24,11 +29,11 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Alert.AlertType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Control.
  */
-class Control {
+@SuppressWarnings("restriction")
+public class Control {
 
 	/** The Constant EMPTY. */
 	private static final String EMPTY = "   ";

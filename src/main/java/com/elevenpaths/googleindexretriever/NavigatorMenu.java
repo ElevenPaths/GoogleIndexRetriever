@@ -16,6 +16,7 @@ import javafx.scene.web.WebView;
 /**
  * The Class NavigatorMenu.
  */
+@SuppressWarnings("restriction")
 public class NavigatorMenu extends MenuButton {
 
 	/**

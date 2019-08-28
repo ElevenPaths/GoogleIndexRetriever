@@ -1,4 +1,4 @@
-package com.elevenpaths.googleindexretriever;
+package com.elevenpaths.googleindexretriever.process;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayDeque;
@@ -9,6 +9,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import com.elevenpaths.googleindexretriever.Control;
+import com.elevenpaths.googleindexretriever.GoogleSearch;
 import com.elevenpaths.googleindexretriever.exceptions.EmptyQueryException;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
@@ -19,6 +21,7 @@ import javafx.scene.control.Alert.AlertType;
 /**
  * The Class KeyWordsProcess.
  */
+@SuppressWarnings("restriction")
 public class KeyWordsProcess extends Observer implements Runnable {
 
 	/** The thread. */

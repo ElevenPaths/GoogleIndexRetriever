@@ -1,22 +1,24 @@
-package com.elevenpaths.googleindexretriever;
+package com.elevenpaths.googleindexretriever.process;
 
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-import org.jsoup.nodes.Element;
+import com.elevenpaths.googleindexretriever.Control;
+import com.elevenpaths.googleindexretriever.GoogleSearch;
 import com.elevenpaths.googleindexretriever.exceptions.EmptyQueryException;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import java.util.concurrent.TimeUnit;
 
 /**
- * The Class MakeShotSpamProcess.
+ * The Class MakeShotProcess.
  */
-public class MakeShotSpamProcess extends Observer implements Runnable {
+@SuppressWarnings("restriction")
+public class MakeShotProcess extends Observer implements Runnable {
 
 	/** The thread. */
 	private Thread thread;
@@ -31,7 +33,7 @@ public class MakeShotSpamProcess extends Observer implements Runnable {
 	private final GoogleSearch gs;
 
 	/** The that. */
-	private final MakeShotSpamProcess that;
+	private final MakeShotProcess that;
 
 	/** The message queue. */
 	private final BlockingQueue<String> messageQueue;
@@ -40,13 +42,13 @@ public class MakeShotSpamProcess extends Observer implements Runnable {
 	private final long startTime;
 
 	/**
-	 * Instantiates a new make shot spam process.
+	 * Instantiates a new make shot process.
 	 *
 	 * @param control the control
 	 * @param gs the gs
 	 * @param query the query
 	 */
-	public MakeShotSpamProcess(final Control control, final GoogleSearch gs, final String query) {
+	public MakeShotProcess(final Control control, final GoogleSearch gs, final String query) {
 		this.control = control;
 		this.gs = gs;
 		this.query = query;
@@ -68,10 +70,10 @@ public class MakeShotSpamProcess extends Observer implements Runnable {
 				if (now - lastUpdate.get() > minUpdateInterval) {
 					final String message = messageQueue.poll();
 					if (message != null) {
+
 						try {
 							gs.setQuery(message, that);
 						} catch (final UnsupportedEncodingException e) {
-							// TODO Auto-generated catch block
 
 							final Alert alert = new Alert(AlertType.ERROR);
 							alert.setTitle("Information Dialog");
@@ -92,8 +94,8 @@ public class MakeShotSpamProcess extends Observer implements Runnable {
 							alert.showAndWait();
 
 							control.stop();
-
 						}
+
 					}
 					lastUpdate.set(now);
 				}
@@ -114,7 +116,6 @@ public class MakeShotSpamProcess extends Observer implements Runnable {
 	public void run() {
 
 		try {
-
 			semaphore = false;
 
 			final String message = query;
@@ -124,20 +125,16 @@ public class MakeShotSpamProcess extends Observer implements Runnable {
 				Thread.sleep(1000);
 			}
 
-			// Successful request
 			final String time = control
 					.calcHMS((int) TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS));
 			control.setElepased(time);
-			for (final Element e : elements) {
-				control.addList(time, "", e.text());
-			}
 
+			control.addList(time, "", result);// found word search
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		control.stop();
-
 	}
 
 	/**
@@ -157,6 +154,7 @@ public class MakeShotSpamProcess extends Observer implements Runnable {
 		if (thread == null) {
 			thread = new Thread(this, "makeShotProcces");
 			thread.start();
+
 		}
 	}
 

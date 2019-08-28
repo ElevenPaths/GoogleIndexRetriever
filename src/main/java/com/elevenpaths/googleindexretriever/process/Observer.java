@@ -1,4 +1,4 @@
-package com.elevenpaths.googleindexretriever;
+package com.elevenpaths.googleindexretriever.process;
 
 import org.jsoup.select.Elements;
 
