@@ -110,9 +110,9 @@ public class App extends Application {
 		// disable close button
 		tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
-		final Tab tabRetriever = new Tab("Retriever");
-		final Tab tabSpam = new Tab("Find Spam");
-		final Tab tabNavigator = new Tab("Navigator");
+		final Tab tabRetriever = new Tab(App.bundle.getString("app.tab.retriever"));
+		final Tab tabSpam = new Tab(App.bundle.getString("app.tab.spam"));
+		final Tab tabNavigator = new Tab(App.bundle.getString("app.tab.navigator"));
 
 		tabPane.getTabs().add(tabRetriever);
 

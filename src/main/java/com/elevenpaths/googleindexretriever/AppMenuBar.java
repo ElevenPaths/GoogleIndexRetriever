@@ -39,14 +39,14 @@ public class AppMenuBar extends MenuBar {
 
 		// menu File
 		final Menu menuFile = new Menu(App.bundle.getString("menu.file"));
-		final MenuItem kewwords = new MenuItem("Keywords");
-		final MenuItem spamkeywords = new MenuItem("Spam Keywords");
+		final MenuItem kewwords = new MenuItem(App.bundle.getString("menu.editKeywords"));
+		final MenuItem spamkeywords = new MenuItem(App.bundle.getString("menu.editSpamKeywords"));
 		menuFile.getItems().addAll(kewwords, spamkeywords);
 
 		// menu Help
-		final Menu menuHelp = new Menu("Help");
-		final MenuItem help = new MenuItem("GIR Help");
-		final MenuItem about = new MenuItem("About");
+		final Menu menuHelp = new Menu(App.bundle.getString("menu.helpMenu"));
+		final MenuItem help = new MenuItem(App.bundle.getString("menu.help"));
+		final MenuItem about = new MenuItem(App.bundle.getString("menu.about"));
 		menuHelp.getItems().addAll(help, about);
 
 		// add menus to bar
@@ -68,11 +68,11 @@ public class AppMenuBar extends MenuBar {
 			final Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 			if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 				try {
-					desktop.browse(new URL("https://www.elevenpaths.com/labs/tools/index.html").toURI());
+					desktop.browse(new URL(App.bundle.getString("helpURL")).toURI());
 				} catch (final MalformedURLException e1) {
 
 					final Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Information Dialog");
+					alert.setTitle(App.bundle.getString("alert.title"));
 					alert.setHeaderText(null);
 					alert.setContentText(e1.getMessage());
 					alert.showAndWait();
@@ -81,7 +81,7 @@ public class AppMenuBar extends MenuBar {
 				} catch (final IOException e1) {
 
 					final Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Information Dialog");
+					alert.setTitle(App.bundle.getString("alert.title"));
 					alert.setHeaderText(null);
 					alert.setContentText(e1.getMessage());
 					alert.showAndWait();
@@ -90,7 +90,7 @@ public class AppMenuBar extends MenuBar {
 				} catch (final URISyntaxException e1) {
 
 					final Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Information Dialog");
+					alert.setTitle(App.bundle.getString("alert.title"));
 					alert.setHeaderText(null);
 					alert.setContentText(e1.getMessage());
 					alert.showAndWait();
@@ -105,7 +105,7 @@ public class AppMenuBar extends MenuBar {
 		about.setOnAction((event) -> {
 
 			final Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("About");
+			alert.setTitle(App.bundle.getString("alert.about.title"));
 			alert.setHeaderText(null);
 
 			final StringBuilder sb = new StringBuilder();

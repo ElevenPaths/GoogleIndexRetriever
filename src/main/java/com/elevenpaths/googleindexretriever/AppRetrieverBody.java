@@ -24,6 +24,12 @@ import javafx.scene.layout.GridPane;
 @SuppressWarnings("restriction")
 public class AppRetrieverBody extends GridPane {
 
+	/** The Constant PROGRESS_BAR_FULL. */
+	public static final int PROGRESS_BAR_FULL = 100;
+
+	/** The Constant EMPTY. */
+	public static final String EMPTY = " ";
+
 	/** The navigator. */
 	private final Navigator navigator;
 
@@ -68,28 +74,27 @@ public class AppRetrieverBody extends GridPane {
 
 		// Defining the Name text field
 		final TextField search = new TextField();
-		search.setPromptText("Search...");
-		// name.setPrefColumnCount(10);
+		search.setPromptText(App.bundle.getString("app.body.search"));
 		search.setMinWidth(850);
 		search.getText();
 		GridPane.setConstraints(search, 0, 0);
 		this.getChildren().add(search);
 
 		// Defining the start button
-		final Button start = new Button("Start");
-		final Tooltip startTooltip = new Tooltip("Start searching");
+		final Button start = new Button(App.bundle.getString("app.body.start"));
+		final Tooltip startTooltip = new Tooltip(App.bundle.getString("app.body.start.tooltip"));
 		start.setTooltip(startTooltip);
 		GridPane.setConstraints(start, 1, 0);
 		this.getChildren().add(start);
 
-		final Button oneShot = new Button("One Shot");
-		final Tooltip oneShotTooltip = new Tooltip("One Shot Start searching");
+		final Button oneShot = new Button(App.bundle.getString("app.body.oneShot"));
+		final Tooltip oneShotTooltip = new Tooltip(App.bundle.getString("app.body.oneShot.tooltip"));
 		oneShot.setTooltip(oneShotTooltip);
 		GridPane.setConstraints(oneShot, 2, 0);
 		this.getChildren().add(oneShot);
 
-		final Button stop = new Button("Stop");
-		final Tooltip stopTooltip = new Tooltip("Stop searching");
+		final Button stop = new Button(App.bundle.getString("app.body.stop"));
+		final Tooltip stopTooltip = new Tooltip(App.bundle.getString("app.body.stop.tooltip"));
 		stop.setTooltip(stopTooltip);
 		GridPane.setConstraints(stop, 3, 0);
 		this.getChildren().add(stop);
@@ -108,7 +113,7 @@ public class AppRetrieverBody extends GridPane {
 		final ProgressBar pb = new ProgressBar(100);
 		pb.setPrefSize(250, 30);
 
-		final Label query = new Label("Query:");
+		final Label query = new Label(App.bundle.getString("app.body.query"));
 		// query.setPrefSize(100, 30);
 
 		final Label queryValue = new Label();
@@ -136,10 +141,10 @@ public class AppRetrieverBody extends GridPane {
 		// gridElapsedlRow.setVgap(5);
 		gridElapsedlRow.setHgap(5);
 
-		final Label elapsed = new Label("Elapsed:");
+		final Label elapsed = new Label(App.bundle.getString("app.body.elapsed"));
 		// elapsed.setPrefSize(50, 20);
 
-		final Label time = new Label("00:00:00");
+		final Label time = new Label(App.bundle.getString("app.body.elapsed.time"));
 		time.setPrefSize(712, 20);
 
 		GridPane.setConstraints(elapsed, 0, 0);
@@ -149,15 +154,15 @@ public class AppRetrieverBody extends GridPane {
 		gridElapsedlRow.getChildren().add(time);
 
 		// Defining the clean button
-		final Button clean = new Button("Clean");
-		final Tooltip cleanTooltip = new Tooltip("Clean results");
+		final Button clean = new Button(App.bundle.getString("app.body.clean"));
+		final Tooltip cleanTooltip = new Tooltip(App.bundle.getString("app.body.clean.tooltip"));
 		clean.setTooltip(cleanTooltip);
 		GridPane.setConstraints(clean, 2, 0);
 		gridElapsedlRow.getChildren().add(clean);
 
 		// Defining the export button
-		final Button export = new Button("Export");
-		final Tooltip exportTooltip = new Tooltip("Export results");
+		final Button export = new Button(App.bundle.getString("app.body.export"));
+		final Tooltip exportTooltip = new Tooltip(App.bundle.getString("app.body.export.tooltip"));
 		export.setTooltip(exportTooltip);
 
 		GridPane.setConstraints(export, 3, 0);
@@ -200,10 +205,10 @@ public class AppRetrieverBody extends GridPane {
 
 		// Add an ActionListener for stop Button
 		stop.setOnAction((event) -> {
-			pb.setProgress(100);
+			pb.setProgress(PROGRESS_BAR_FULL);
 			control.stop();
-			time.setText("00:00:00");
-			queryValue.setText(" ");
+			time.setText(App.bundle.getString("app.body.elapsed.time"));
+			queryValue.setText(EMPTY);
 
 		});
 
@@ -231,23 +236,23 @@ public class AppRetrieverBody extends GridPane {
 					e.printStackTrace();
 
 					final Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Information Dialog");
+					alert.setTitle(App.bundle.getString("alert.title"));
 					alert.setHeaderText(null);
-					alert.setContentText("Error building file");
+					alert.setContentText(App.bundle.getString("alert.export.error"));
 					alert.showAndWait();
 				}
 
 				final Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Information Dialog");
+				alert.setTitle(App.bundle.getString("alert.title"));
 				alert.setHeaderText(null);
-				alert.setContentText("Export success");
+				alert.setContentText(App.bundle.getString("alert.export.success"));
 				alert.showAndWait();
 
 			} else {
 				final Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Information Dialog");
+				alert.setTitle(App.bundle.getString("alert.export.no"));
 				alert.setHeaderText(null);
-				alert.setContentText("No data to export");
+				alert.setContentText("alert.export.noData");
 				alert.showAndWait();
 
 			}

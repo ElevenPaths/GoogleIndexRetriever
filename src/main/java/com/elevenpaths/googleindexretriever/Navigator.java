@@ -50,8 +50,8 @@ public class Navigator extends HBox {
 		pageUrl = new TextField();
 
 		// Create the Buttons
-		goButton = new Button("Go");
-		final Tooltip goTooltip = new Tooltip("Use http or https in the URLs");
+		goButton = new Button(App.bundle.getString("app.navigator.go"));
+		final Tooltip goTooltip = new Tooltip(App.bundle.getString("app.navigator.go.tooltip"));
 		goButton.setTooltip(goTooltip);
 
 		// Let the TextField grow horizontallly

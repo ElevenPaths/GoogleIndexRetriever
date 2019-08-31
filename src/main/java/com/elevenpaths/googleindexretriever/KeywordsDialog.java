@@ -108,11 +108,11 @@ public class KeywordsDialog extends Dialog<String> {
 
 		// Defining the add row
 		final TextField newWord = new TextField();
-		newWord.setPromptText("Add new words...");
+		newWord.setPromptText(App.bundle.getString("alert.dialog.newWord"));
 		newWord.setPrefWidth(140);
 
-		final Button add = new Button("Add");
-		final Tooltip addTooltip = new Tooltip("Add keyword");
+		final Button add = new Button(App.bundle.getString("alert.dialog.add"));
+		final Tooltip addTooltip = new Tooltip(App.bundle.getString("alert.dialog.add.tooltip"));
 		add.setTooltip(addTooltip);
 
 		final HBox addRow = new HBox(newWord, add);
@@ -122,14 +122,14 @@ public class KeywordsDialog extends Dialog<String> {
 		root.getChildren().add(addRow);
 
 		// Defining the delete button
-		final Button delete = new Button("Delete");
-		final Tooltip deleteTooltip = new Tooltip("Delete keyword");
+		final Button delete = new Button(App.bundle.getString("alert.dialog.delete"));
+		final Tooltip deleteTooltip = new Tooltip(App.bundle.getString("alert.dialog.delete.tooltip"));
 		delete.setTooltip(deleteTooltip);
 		GridPane.setConstraints(delete, 5, 1);
 		root.getChildren().add(delete);
 
 		// Defining the useKeywords checkbox
-		final CheckBox useKeywords = new CheckBox("Use Keywords");
+		final CheckBox useKeywords = new CheckBox(App.bundle.getString("alert.dialog.useKeywords"));
 		if (!spamWindow) {
 			useKeywords.setSelected(useKeywordsCheck);
 			GridPane.setConstraints(useKeywords, 5, 2);
@@ -137,7 +137,7 @@ public class KeywordsDialog extends Dialog<String> {
 		}
 
 		// Defining the total row
-		final Label total = new Label("Total:");
+		final Label total = new Label(App.bundle.getString("alert.dialog.total"));
 		final Label totalValue = new Label(String.valueOf(keywords.size()));
 		final HBox totalRow = new HBox(total, totalValue);
 		totalRow.setSpacing(5);
@@ -145,8 +145,8 @@ public class KeywordsDialog extends Dialog<String> {
 		root.getChildren().add(totalRow);
 
 		// Defining the delete button
-		final Button saveButton = new Button("Save");
-		final Tooltip saveTooltip = new Tooltip("Save data");
+		final Button saveButton = new Button(App.bundle.getString("alert.dialog.save"));
+		final Tooltip saveTooltip = new Tooltip(App.bundle.getString("alert.dialog.save.tooltip"));
 		saveButton.setTooltip(saveTooltip);
 		GridPane.setConstraints(saveButton, 5, 43);
 		root.getChildren().add(saveButton);

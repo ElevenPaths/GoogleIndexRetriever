@@ -28,6 +28,9 @@ import org.jsoup.helper.W3CDom;
 @SuppressWarnings("restriction")
 public class GoogleSearch {
 
+	/** The Constant GOOGLE_SEARCH_URL. */
+	public static final String GOOGLE_SEARCH_URL = "https://www.google.com/search?q=";
+
 	/** The Constant ONE. */
 	private static final int ONE = 1;
 
@@ -156,7 +159,7 @@ public class GoogleSearch {
 			throw new EmptyQueryException();
 		}
 
-		final String request = "https://www.google.com/search?q=" + URLEncoder.encode(stripXSS(query), "UTF-8");
+		final String request = GOOGLE_SEARCH_URL + URLEncoder.encode(stripXSS(query), "UTF-8");
 
 		navigator.setUrl(request);
 

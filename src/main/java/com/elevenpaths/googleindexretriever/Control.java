@@ -36,6 +36,10 @@ import javafx.scene.control.Alert.AlertType;
 @SuppressWarnings("restriction")
 public class Control {
 
+	public static String KEYWORDS_FILE = "keywords.txt";
+
+	public static String SPAN_KEYWORDS_FILE = "spamKeywords.txt";
+
 	/** The Constant ZERO. */
 	private static final int ZERO = 0;
 
@@ -394,7 +398,7 @@ public class Control {
 		final ArrayList<String> keywords = new ArrayList<String>();
 
 		try {
-			final FileReader file = new FileReader("keywords.txt");
+			final FileReader file = new FileReader(KEYWORDS_FILE);
 			final BufferedReader reader = new BufferedReader(file);
 			String line;
 
@@ -410,18 +414,18 @@ public class Control {
 			gs.setKeywords(keywords);
 		} catch (final FileNotFoundException e) {
 			final Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Information Dialog");
+			alert.setTitle(App.bundle.getString("alert.title"));
 			alert.setHeaderText(null);
-			alert.setContentText("Keywords not found.Default keywords in use");
+			alert.setContentText(App.bundle.getString("alert.keywords.default"));
 			alert.showAndWait();
 
 			gs.loadDefaultKeywords();
 
 		} catch (final IOException e) {
 			final Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Information Dialog");
+			alert.setTitle(App.bundle.getString("alert.title"));
 			alert.setHeaderText(null);
-			alert.setContentText("Error reading Keywords file");
+			alert.setContentText(App.bundle.getString("alert.keywords.error"));
 			alert.showAndWait();
 		}
 
@@ -436,7 +440,7 @@ public class Control {
 		final ArrayList<String> keywordsSpam = new ArrayList<String>();
 
 		try {
-			final FileReader file = new FileReader("spamKeywords.txt");
+			final FileReader file = new FileReader(SPAN_KEYWORDS_FILE);
 			final BufferedReader reader = new BufferedReader(file);
 			String line;
 
@@ -451,17 +455,17 @@ public class Control {
 			gs.setSpamKeywords(keywordsSpam);
 		} catch (final FileNotFoundException e) {
 			final Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Information Dialog");
+			alert.setTitle(App.bundle.getString("alert.title"));
 			alert.setHeaderText(null);
-			alert.setContentText("Spam Keywords not found. Default spam keywords in use");
+			alert.setContentText(App.bundle.getString("alert.spamKeywords.default"));
 			alert.showAndWait();
 
 			gs.loadDefaultSpamKeywords();
 		} catch (final IOException e) {
 			final Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Information Dialog");
+			alert.setTitle(App.bundle.getString("alert.title"));
 			alert.setHeaderText(null);
-			alert.setContentText("Error reading Spam Keywords file");
+			alert.setContentText(App.bundle.getString("alert.spamKeywords.error"));
 			alert.showAndWait();
 			e.printStackTrace();
 		}
@@ -475,7 +479,7 @@ public class Control {
 	public void saveKeywords() {
 		final ArrayList<String> keywords = gs.getKeywords();
 		try {
-			final File file = new File("keywords.txt");
+			final File file = new File(KEYWORDS_FILE);
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
@@ -492,9 +496,9 @@ public class Control {
 		} catch (final IOException e) {
 
 			final Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Information Dialog");
+			alert.setTitle(App.bundle.getString("alert.title"));
 			alert.setHeaderText(null);
-			alert.setContentText("Error saving Keywords into a file");
+			alert.setContentText(App.bundle.getString("alert.keywords.error.saving"));
 			alert.showAndWait();
 
 			e.printStackTrace();
@@ -508,7 +512,7 @@ public class Control {
 
 		final ArrayList<String> keywordsSpam = gs.getSpamKeywords();
 		try {
-			final File file = new File("spamKeywords.txt");
+			final File file = new File(SPAN_KEYWORDS_FILE);
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
@@ -525,9 +529,9 @@ public class Control {
 		} catch (final IOException e) {
 
 			final Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Information Dialog");
+			alert.setTitle(App.bundle.getString("alert.title"));
 			alert.setHeaderText(null);
-			alert.setContentText("Error saving Spam Keywords into a file");
+			alert.setContentText(App.bundle.getString("alert.spamKeywords.error.saving"));
 			alert.showAndWait();
 
 			e.printStackTrace();
@@ -546,13 +550,15 @@ public class Control {
 			if (!gs.isLoadedSpamKeywords()) {
 				loadSpamKeywords();
 			}
-			ksd = new KeywordsDialog("Spam Keywords", gs.getSpamKeywords(), gs.isUseSpamKeywords(), spam);
+			ksd = new KeywordsDialog(App.bundle.getString("alert.spamKeywords.title"), gs.getSpamKeywords(),
+					gs.isUseSpamKeywords(), spam);
 		} else {
 
 			if (!gs.isLoadedKeywords()) {
 				loadKeywords();
 			}
-			ksd = new KeywordsDialog("Keywords", gs.getKeywords(), gs.isUseKeywords(), spam);
+			ksd = new KeywordsDialog(App.bundle.getString("alert.keywords.title"), gs.getKeywords(), gs.isUseKeywords(),
+					spam);
 		}
 		ksd.showAndWait();
 
@@ -569,9 +575,9 @@ public class Control {
 			}
 
 			final Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("Information Dialog");
+			alert.setTitle(App.bundle.getString("alert.title"));
 			alert.setHeaderText(null);
-			alert.setContentText("Save success");
+			alert.setContentText(App.bundle.getString("alert.save.successful"));
 			alert.showAndWait();
 
 		}
