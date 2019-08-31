@@ -11,14 +11,16 @@ import com.elevenpaths.googleindexretriever.exceptions.EmptyQueryException;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MakeShotProcess.
  */
 @SuppressWarnings("restriction")
 public class MakeShotProcess extends Observer implements Runnable {
+
+	/** The thread name. */
+	public static String THREAD_NAME = "shotProcces";
 
 	/** The thread. */
 	private Thread thread;
@@ -74,26 +76,12 @@ public class MakeShotProcess extends Observer implements Runnable {
 						try {
 							gs.setQuery(message, that);
 						} catch (final UnsupportedEncodingException e) {
-
-							final Alert alert = new Alert(AlertType.ERROR);
-							alert.setTitle("Information Dialog");
-							alert.setHeaderText(null);
-							alert.setContentText("Unsupported Encoding Exception");
-							alert.showAndWait();
-
+							control.stop();
 							e.printStackTrace();
 
-							control.stop();
-
 						} catch (final EmptyQueryException e) {
-							// TODO Auto-generated catch block
-							final Alert alert = new Alert(AlertType.ERROR);
-							alert.setTitle("Information Dialog");
-							alert.setHeaderText(null);
-							alert.setContentText("Empty Query");
-							alert.showAndWait();
-
 							control.stop();
+							e.printStackTrace();
 						}
 
 					}
@@ -152,7 +140,7 @@ public class MakeShotProcess extends Observer implements Runnable {
 	public void start() {
 		// System.out.println("Starting " + threadName );
 		if (thread == null) {
-			thread = new Thread(this, "makeShotProcces");
+			thread = new Thread(this, THREAD_NAME);
 			thread.start();
 
 		}

@@ -15,11 +15,15 @@ import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class KeyWordsProcess.
  */
 @SuppressWarnings("restriction")
 public class KeyWordsProcess extends Observer implements Runnable {
+
+	/** The thread name. */
+	public static String THREAD_NAME = "keywords";
 
 	/** The thread. */
 	private Thread thread;
@@ -88,7 +92,6 @@ public class KeyWordsProcess extends Observer implements Runnable {
 						} catch (final UnsupportedEncodingException e) {
 							// TODO Auto-generated catch block
 							control.stop();
-
 							e.printStackTrace();
 
 						} catch (final EmptyQueryException e) {
@@ -293,7 +296,7 @@ public class KeyWordsProcess extends Observer implements Runnable {
 	public void start() {
 		// System.out.println("Starting " + threadName );
 		if (thread == null) {
-			thread = new Thread(this, "keywords");
+			thread = new Thread(this, THREAD_NAME);
 			thread.start();
 		}
 	}

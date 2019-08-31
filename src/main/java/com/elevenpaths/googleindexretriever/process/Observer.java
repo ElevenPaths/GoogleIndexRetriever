@@ -2,6 +2,7 @@ package com.elevenpaths.googleindexretriever.process;
 
 import org.jsoup.select.Elements;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Observer.
  */
@@ -10,6 +11,7 @@ public class Observer {
 	/** The semaphore. */
 	protected boolean semaphore = false;
 
+	/** The stop. */
 	protected boolean stop = false;
 
 	/** The result. */
@@ -48,12 +50,15 @@ public class Observer {
 	/**
 	 * Sets the eleements.
 	 *
-	 * @param eleements the new eleements
+	 * @param elements the new elements
 	 */
 	public void setElements(final Elements elements) {
 		this.elements = elements;
 	}
 
+	/**
+	 * Stop.
+	 */
 	public void stop() {
 		stop = true;
 	}

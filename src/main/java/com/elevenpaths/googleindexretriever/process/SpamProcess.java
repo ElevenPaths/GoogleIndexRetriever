@@ -15,11 +15,15 @@ import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class SpamProcess.
  */
 @SuppressWarnings("restriction")
 public class SpamProcess extends Observer implements Runnable {
+
+	/** The thread name. */
+	public static String THREAD_NAME = "spam";
 
 	/** The thread. */
 	private Thread thread;
@@ -148,7 +152,7 @@ public class SpamProcess extends Observer implements Runnable {
 	public void start() {
 		// System.out.println("Starting " + threadName );
 		if (thread == null) {
-			thread = new Thread(this, "spam");
+			thread = new Thread(this, THREAD_NAME);
 			thread.start();
 		}
 	}
