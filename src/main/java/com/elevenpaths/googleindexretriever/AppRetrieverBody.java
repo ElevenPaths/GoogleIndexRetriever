@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Alert;
@@ -19,6 +17,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class AppRetrieverBody.
  */
@@ -33,6 +32,9 @@ public class AppRetrieverBody extends GridPane {
 
 	/** The name file to export. */
 	private final String nameFileToExport;
+
+	/** The control. */
+	private Control control;
 
 	/** The spam. */
 	private final boolean spam;
@@ -75,14 +77,20 @@ public class AppRetrieverBody extends GridPane {
 
 		// Defining the start button
 		final Button start = new Button("Start");
+		final Tooltip startTooltip = new Tooltip("Start searching");
+		start.setTooltip(startTooltip);
 		GridPane.setConstraints(start, 1, 0);
 		this.getChildren().add(start);
 
 		final Button oneShot = new Button("One Shot");
+		final Tooltip oneShotTooltip = new Tooltip("One Shot Start searching");
+		oneShot.setTooltip(oneShotTooltip);
 		GridPane.setConstraints(oneShot, 2, 0);
 		this.getChildren().add(oneShot);
 
 		final Button stop = new Button("Stop");
+		final Tooltip stopTooltip = new Tooltip("Stop searching");
+		stop.setTooltip(stopTooltip);
 		GridPane.setConstraints(stop, 3, 0);
 		this.getChildren().add(stop);
 
@@ -158,98 +166,112 @@ public class AppRetrieverBody extends GridPane {
 		GridPane.setConstraints(gridElapsedlRow, 0, 3, 4, 1);
 		this.getChildren().add(gridElapsedlRow);
 
-		final Control control = new Control(navigator, tabPane, retrieverResult, queryValue, time, pb);
+		control = new Control(navigator, tabPane, retrieverResult, queryValue, time, pb);
 
 		// Add an ActionListener for start Button
-		start.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(final ActionEvent event) {
+		start.setOnAction((event) -> {
+			final String queryVal = search.getText();
+
+			if (!queryVal.trim().isEmpty()) {
 				pb.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 				if (spam) {
-					control.makeSpamQuery(search.getText());
+					control.makeSpamQuery(queryVal);
 				} else {
-					control.makeQuery(search.getText());
+					control.makeQuery(queryVal);
 				}
-
 			}
+
 		});
 
 		// Add an ActionListener for oneShot Button
-		oneShot.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(final ActionEvent event) {
+		oneShot.setOnAction((event) -> {
+			final String queryVal = search.getText();
+
+			if (!queryVal.trim().isEmpty()) {
 				pb.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 				if (spam) {
-					control.makeShotSpam(search.getText());
+					control.makeShotSpam(queryVal);
 				} else {
-					control.makeShot(search.getText());
+					control.makeShot(queryVal);
 				}
-
 			}
+
 		});
 
 		// Add an ActionListener for stop Button
-		stop.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(final ActionEvent event) {
-				pb.setProgress(100);
-				control.stop();
-				time.setText("00:00:00");
-				queryValue.setText(" ");
-			}
+		stop.setOnAction((event) -> {
+			pb.setProgress(100);
+			control.stop();
+			time.setText("00:00:00");
+			queryValue.setText(" ");
+
 		});
 
 		// Add an ActionListener for clean Button
-		clean.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(final ActionEvent event) {
-				retrieverResult.getItems().clear();
-			}
+		clean.setOnAction((event) -> {
+			retrieverResult.getItems().clear();
+
 		});
 
 		// Add an ActionListener for export Button
-		export.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(final ActionEvent event) {
-				final ObservableList<String> values = retrieverResult.getItems();
+		export.setOnAction((event) -> {
+			final ObservableList<String> values = retrieverResult.getItems();
 
-				if (retrieverResult.getItems().size() > 0) {
-					final ArrayList<String> rows = new ArrayList<String>();
+			if (retrieverResult.getItems().size() > 0) {
+				final ArrayList<String> rows = new ArrayList<String>();
 
-					for (final String element : values) {
-						rows.add(element);
-					}
+				for (final String element : values) {
+					rows.add(element);
+				}
 
-					try {
-						control.export(rows, search.getText(), nameFileToExport);
-					} catch (final IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				try {
+					control.export(rows, search.getText(), nameFileToExport);
+				} catch (final IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 
-						final Alert alert = new Alert(AlertType.ERROR);
-						alert.setTitle("Information Dialog");
-						alert.setHeaderText(null);
-						alert.setContentText("Error building file");
-						alert.showAndWait();
-					}
-
-					final Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Information Dialog");
-					alert.setHeaderText(null);
-					alert.setContentText("Export success");
-					alert.showAndWait();
-
-				} else {
 					final Alert alert = new Alert(AlertType.ERROR);
 					alert.setTitle("Information Dialog");
 					alert.setHeaderText(null);
-					alert.setContentText("No data to export");
+					alert.setContentText("Error building file");
 					alert.showAndWait();
-
 				}
 
+				final Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Information Dialog");
+				alert.setHeaderText(null);
+				alert.setContentText("Export success");
+				alert.showAndWait();
+
+			} else {
+				final Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Information Dialog");
+				alert.setHeaderText(null);
+				alert.setContentText("No data to export");
+				alert.showAndWait();
+
 			}
+
 		});
 
 	}
+
+	/**
+	 * Gets the control.
+	 *
+	 * @return the control
+	 */
+	public Control getControl() {
+		return control;
+	}
+
+	/**
+	 * Sets the control.
+	 *
+	 * @param control the new control
+	 */
+	public void setControl(final Control control) {
+		this.control = control;
+	}
+
 }

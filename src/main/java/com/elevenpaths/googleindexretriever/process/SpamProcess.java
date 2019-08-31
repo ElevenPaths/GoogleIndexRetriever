@@ -2,7 +2,6 @@ package com.elevenpaths.googleindexretriever.process;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -15,8 +14,6 @@ import com.elevenpaths.googleindexretriever.exceptions.EmptyQueryException;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 /**
  * The Class SpamProcess.
@@ -39,9 +36,6 @@ public class SpamProcess extends Observer implements Runnable {
 	/** The query. */
 	private final String query;
 
-	/** The spam keywords list. */
-	private final ArrayList<String> spamKeywordsList;
-
 	/** The that. */
 	private final SpamProcess that;
 
@@ -54,16 +48,13 @@ public class SpamProcess extends Observer implements Runnable {
 	 * @param control the control
 	 * @param gs the gs
 	 * @param query the query
-	 * @param keywords the keywords
-	 * @param useKeywords the use keywords
 	 */
-	public SpamProcess(final Control control, final GoogleSearch gs, final String query,
-			final ArrayList<String> keywords, final boolean useKeywords) {
+	public SpamProcess(final Control control, final GoogleSearch gs, final String query) {
 		this.control = control;
 		this.gs = gs;
 		this.query = query;
 		startTime = System.nanoTime();
-		spamKeywordsList = keywords;
+
 		that = this;
 
 		messageQueue = new ArrayBlockingQueue<>(1);
@@ -84,26 +75,12 @@ public class SpamProcess extends Observer implements Runnable {
 							gs.setQuery(message, that);
 						} catch (final UnsupportedEncodingException e) {
 							// TODO Auto-generated catch block
-
-							final Alert alert = new Alert(AlertType.ERROR);
-							alert.setTitle("Information Dialog");
-							alert.setHeaderText(null);
-							alert.setContentText("Unsupported Encoding Exception");
-							alert.showAndWait();
-
+							control.stop();
 							e.printStackTrace();
 
-							control.stop();
-
 						} catch (final EmptyQueryException e) {
-							// TODO Auto-generated catch block
-							final Alert alert = new Alert(AlertType.ERROR);
-							alert.setTitle("Information Dialog");
-							alert.setHeaderText(null);
-							alert.setContentText("Empty Query");
-							alert.showAndWait();
-
 							control.stop();
+							e.printStackTrace();
 
 						}
 					}

@@ -1,5 +1,8 @@
 package com.elevenpaths.googleindexretriever;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuButton;
@@ -10,20 +13,36 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class App.
  */
 @SuppressWarnings("restriction")
 public class App extends Application {
 
+	/** The bundle. */
+	public static ResourceBundle bundle;
+
+	/** The Constant RETRIEVER_EXPORT_FILE. */
 	private static final String RETRIEVER_EXPORT_FILE = "export.html";
+
+	/** The Constant SPAM_EXPORT_FILE. */
 	private static final String SPAM_EXPORT_FILE = "spamExport.html";
+
+	/** The Constant google url. */
+	private static final String GOOGLE_URL = "http://www.google.com";
 
 	/** The navigator. */
 	private Navigator navigator;
 
 	/** The tab pane. */
 	private TabPane tabPane;
+
+	/** The retriever control. */
+	private Control retrieverControl;
+
+	/** The spam control. */
+	private Control spamControl;
 
 	/**
 	 * The main method.
@@ -46,17 +65,28 @@ public class App extends Application {
 		// setUserAgentStylesheet(STYLESHEET_CASPIAN); default in java 7
 		// setUserAgentStylesheet(STYLESHEET_MODENA); default in java 8
 
+		// Locale
+		final Locale locale = new Locale("en", "UK");
+		// Locale locale = new Locale("es", "ES");
+		// final Locale locale = Locale.getDefault(); --> Automatic detection of Locale
+
+		// Bundle
+		bundle = ResourceBundle.getBundle("strings", locale);
+
 		// App Icon
 		primaryStage.getIcons().add(new Image("img/xr.png"));
 
 		// App tittle
-		primaryStage.setTitle("Google Index Retreiver");
+		primaryStage.setTitle(App.bundle.getString("app.title"));
+
+		// disable resize
+		primaryStage.setResizable(false);
 
 		// Root panel
 		final VBox root = new VBox();
 
 		// menu
-		final AppMenuBar appMenuBar = new AppMenuBar();
+		final AppMenuBar appMenuBar = new AppMenuBar(this);
 		root.getChildren().add(appMenuBar);
 
 		// body
@@ -93,11 +123,15 @@ public class App extends Application {
 		// No move
 		tabNavigator.setContent(createNavigator());
 
+		// retriever body
 		final AppRetrieverBody retrieverBody = new AppRetrieverBody(navigator, tabPane, RETRIEVER_EXPORT_FILE, false);
+		setRetrieverControl(retrieverBody.getControl());
 		final VBox vboxRetriever = new VBox(retrieverBody);
 		tabRetriever.setContent(vboxRetriever);
 
+		// spam retriever body
 		final AppRetrieverBody spamBody = new AppRetrieverBody(navigator, tabPane, SPAM_EXPORT_FILE, true);
+		setSpamControl(spamBody.getControl());
 		final VBox vboxSpam = new VBox(spamBody);
 		tabSpam.setContent(vboxSpam);
 
@@ -116,7 +150,7 @@ public class App extends Application {
 		final WebView webView = new WebView();
 
 		// Load the Google web page
-		final String homePageUrl = "http://www.google.com";
+		final String homePageUrl = GOOGLE_URL;
 
 		// Create the WebMenu
 		final MenuButton menu = new NavigatorMenu(webView);
@@ -135,6 +169,51 @@ public class App extends Application {
 
 		return rootNavigator;
 
+	}
+
+	/**
+	 * Gets the retriever control.
+	 *
+	 * @return the retriever control
+	 */
+	protected Control getRetrieverControl() {
+		return retrieverControl;
+	}
+
+	/**
+	 * Sets the retriever control.
+	 *
+	 * @param retrieverControl the new retriever control
+	 */
+	protected void setRetrieverControl(final Control retrieverControl) {
+		this.retrieverControl = retrieverControl;
+	}
+
+	/**
+	 * Gets the spam control.
+	 *
+	 * @return the spam control
+	 */
+	protected Control getSpamControl() {
+		return spamControl;
+	}
+
+	/**
+	 * Sets the spam control.
+	 *
+	 * @param spamControl the new spam control
+	 */
+	protected void setSpamControl(final Control spamControl) {
+		this.spamControl = spamControl;
+	}
+
+	/**
+	 * Sets the locale.
+	 *
+	 * @param locale the new locale
+	 */
+	public static void setLocale(final Locale locale) {
+		bundle = ResourceBundle.getBundle("strings", locale);
 	}
 
 }

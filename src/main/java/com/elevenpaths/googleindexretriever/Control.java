@@ -29,11 +29,15 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Alert.AlertType;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Control.
  */
 @SuppressWarnings("restriction")
 public class Control {
+
+	/** The Constant ZERO. */
+	private static final int ZERO = 0;
 
 	/** The Constant EMPTY. */
 	private static final String EMPTY = "   ";
@@ -60,16 +64,16 @@ public class Control {
 	private final ListView<String> listResult;
 
 	/** The result queue. */
-	private final BlockingQueue<String> resultQueue;
+	private final BlockingQueue<String> resultQueue; // comunication between threads
 
 	/** The query queue. */
-	private final BlockingQueue<String> queryQueue;
+	private final BlockingQueue<String> queryQueue; // comunication between threads
 
 	/** The elapsed queue. */
-	private final BlockingQueue<String> elapsedQueue;
+	private final BlockingQueue<String> elapsedQueue; // comunication between threads
 
 	/** The stop queue. */
-	private final BlockingQueue<String> stopQueue;
+	private final BlockingQueue<String> stopQueue; // comunication between threads
 
 	/** The bgkeywords process. */
 	private KeyWordsProcess bgkeywordsProcess;
@@ -83,12 +87,6 @@ public class Control {
 	/** The make shot spam proccess. */
 	private MakeShotSpamProcess makeShotSpamProccess;
 
-	/** The use keywords. */
-	private final boolean useKeywords;
-
-	/** The use spam keywords. */
-	private final boolean useSpamKeywords;
-
 	/**
 	 * Instantiates a new control.
 	 *
@@ -101,16 +99,15 @@ public class Control {
 	 */
 	public Control(final Navigator navigator, final TabPane tabPane, final ListView<String> listResult,
 			final Label queryValue, final Label time, final ProgressBar pb) {
+
 		gs = new GoogleSearch(navigator, tabPane);
+
 		this.listResult = listResult;
 		this.tabPane = tabPane;
 		this.navigator = navigator;
 		this.queryValue = queryValue;
 		this.time = time;
 		this.pb = pb;
-
-		useKeywords = true;
-		useSpamKeywords = true;
 
 		resultQueue = new ArrayBlockingQueue<String>(1000);
 
@@ -122,7 +119,7 @@ public class Control {
 
 		final LongProperty lastUpdate = new SimpleLongProperty();
 
-		final long minUpdateInterval = 0; // nanoseconds. Set to higher number to slow output.
+		final long minUpdateInterval = ZERO; // nanoseconds. Set to higher number to slow output.
 
 		final AnimationTimer timer = new AnimationTimer() {
 
@@ -171,9 +168,15 @@ public class Control {
 	 * @param query the query
 	 */
 	public void makeQuery(final String query) {
-		bgkeywordsProcess = new KeyWordsProcess(this, gs, query, loadKeywords(), useKeywords);
-		bgkeywordsProcess.start();
 
+		if (!gs.isLoadedKeywords()) {
+			loadKeywords();
+		}
+
+		if (!query.trim().isEmpty()) {
+			bgkeywordsProcess = new KeyWordsProcess(this, gs, query);
+			bgkeywordsProcess.start();
+		}
 	}
 
 	/**
@@ -182,8 +185,14 @@ public class Control {
 	 * @param query the query
 	 */
 	public void makeSpamQuery(final String query) {
-		bgspamProcess = new SpamProcess(this, gs, query, loadSpamKeyWords(), useSpamKeywords);
-		bgspamProcess.start();
+
+		if (!gs.isLoadedSpamKeywords()) {
+			loadSpamKeywords();
+		}
+		if (!query.trim().isEmpty()) {
+			bgspamProcess = new SpamProcess(this, gs, query);
+			bgspamProcess.start();
+		}
 
 	}
 
@@ -193,8 +202,10 @@ public class Control {
 	 * @param query the query
 	 */
 	public void makeShot(final String query) {
-		makeShotProcess = new MakeShotProcess(this, gs, query);
-		makeShotProcess.start();
+		if (!query.trim().isEmpty()) {
+			makeShotProcess = new MakeShotProcess(this, gs, query);
+			makeShotProcess.start();
+		}
 	}
 
 	/**
@@ -203,9 +214,10 @@ public class Control {
 	 * @param query the query
 	 */
 	public void makeShotSpam(final String query) {
-
-		makeShotSpamProccess = new MakeShotSpamProcess(this, gs, query);
-		makeShotSpamProccess.start();
+		if (!query.trim().isEmpty()) {
+			makeShotSpamProccess = new MakeShotSpamProcess(this, gs, query);
+			makeShotSpamProccess.start();
+		}
 
 	}
 
@@ -241,13 +253,6 @@ public class Control {
 
 		pb.setProgress(100);
 
-	}
-
-	/**
-	 * Search keywords.
-	 */
-	public void searchKeywords() {
-		// w.searchKeywords();
 	}
 
 	/**
@@ -401,6 +406,8 @@ public class Control {
 
 			reader.close();
 			file.close();
+
+			gs.setKeywords(keywords);
 		} catch (final FileNotFoundException e) {
 			final Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Information Dialog");
@@ -411,6 +418,11 @@ public class Control {
 			gs.loadDefaultKeywords();
 
 		} catch (final IOException e) {
+			final Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText(null);
+			alert.setContentText("Error reading Keywords file");
+			alert.showAndWait();
 		}
 
 		return keywords;
@@ -419,9 +431,8 @@ public class Control {
 	/**
 	 * Load spam key words.
 	 *
-	 * @return the array list
 	 */
-	public ArrayList<String> loadSpamKeyWords() {
+	private void loadSpamKeywords() {
 		final ArrayList<String> keywordsSpam = new ArrayList<String>();
 
 		try {
@@ -437,7 +448,7 @@ public class Control {
 
 			reader.close();
 			file.close();
-
+			gs.setSpamKeywords(keywordsSpam);
 		} catch (final FileNotFoundException e) {
 			final Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Information Dialog");
@@ -447,59 +458,124 @@ public class Control {
 
 			gs.loadDefaultSpamKeywords();
 		} catch (final IOException e) {
+			final Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText(null);
+			alert.setContentText("Error reading Spam Keywords file");
+			alert.showAndWait();
+			e.printStackTrace();
 		}
-
-		return keywordsSpam;
 
 	}
 
 	/**
 	 * Save keywords.
 	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public void saveKeywords() throws IOException {
+	public void saveKeywords() {
 		final ArrayList<String> keywords = gs.getKeywords();
+		try {
+			final File file = new File("keywords.txt");
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
 
-		final File file = new File("keywords.txt");
-		// if file doesnt exists, then create it
-		if (!file.exists()) {
-			file.createNewFile();
+			final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			final BufferedWriter bw = new BufferedWriter(fw);
+			for (final String k : keywords) {
+				bw.write(k);
+				bw.newLine();
+			}
+			bw.close();
+			fw.close();
+		} catch (final IOException e) {
+
+			final Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText(null);
+			alert.setContentText("Error saving Keywords into a file");
+			alert.showAndWait();
+
+			e.printStackTrace();
 		}
-
-		final FileWriter fw = new FileWriter(file.getAbsoluteFile());
-		final BufferedWriter bw = new BufferedWriter(fw);
-		for (final String k : keywords) {
-			bw.write(k);
-			bw.newLine();
-		}
-		bw.close();
-		fw.close();
-
 	}
 
 	/**
 	 * Save spam keywords.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public void saveSpamKeywords() throws IOException {
+	public void saveSpamKeywords() {
 
 		final ArrayList<String> keywordsSpam = gs.getSpamKeywords();
+		try {
+			final File file = new File("spamKeywords.txt");
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
 
-		final File file = new File("spamKeywords.txt");
-		// if file doesnt exists, then create it
-		if (!file.exists()) {
-			file.createNewFile();
-		}
+			final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			final BufferedWriter bw = new BufferedWriter(fw);
+			for (final String k : keywordsSpam) {
+				bw.write(k);
+				bw.newLine();
+			}
+			bw.close();
+			fw.close();
+		} catch (final IOException e) {
 
-		final FileWriter fw = new FileWriter(file.getAbsoluteFile());
-		final BufferedWriter bw = new BufferedWriter(fw);
-		for (final String k : keywordsSpam) {
-			bw.write(k);
-			bw.newLine();
+			final Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText(null);
+			alert.setContentText("Error saving Spam Keywords into a file");
+			alert.showAndWait();
+
+			e.printStackTrace();
 		}
-		bw.close();
-		fw.close();
 	}
+
+	/**
+	 * Launch keywords.
+	 *
+	 * @param spam the spam
+	 */
+	public void launchKeywords(final boolean spam) {
+		KeywordsDialog ksd = null;
+
+		if (spam) {
+			if (!gs.isLoadedSpamKeywords()) {
+				loadSpamKeywords();
+			}
+			ksd = new KeywordsDialog("Spam Keywords", gs.getSpamKeywords(), gs.isUseSpamKeywords(), spam);
+		} else {
+
+			if (!gs.isLoadedKeywords()) {
+				loadKeywords();
+			}
+			ksd = new KeywordsDialog("Keywords", gs.getKeywords(), gs.isUseKeywords(), spam);
+		}
+		ksd.showAndWait();
+
+		if (ksd.isSave()) {
+			if (spam) {
+				gs.setSpamKeywords(ksd.getKeywords());
+				saveSpamKeywords();
+				gs.setUseSpamKeywords(ksd.isUseKeywordsCheck());
+
+			} else {
+				gs.setKeywords(ksd.getKeywords());
+				saveKeywords();
+				gs.setUseKeywords(ksd.isUseKeywordsCheck());
+			}
+
+			final Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText(null);
+			alert.setContentText("Save success");
+			alert.showAndWait();
+
+		}
+
+	}
+
 }

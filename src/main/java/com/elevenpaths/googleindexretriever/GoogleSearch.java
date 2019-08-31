@@ -10,9 +10,7 @@ import com.elevenpaths.googleindexretriever.process.MakeShotProcess;
 import com.elevenpaths.googleindexretriever.process.MakeShotSpamProcess;
 import com.elevenpaths.googleindexretriever.process.Observer;
 import com.elevenpaths.googleindexretriever.process.SpamProcess;
-
 import org.jsoup.Jsoup;
-//import org.w3c.dom.Document;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
@@ -23,11 +21,18 @@ import javafx.concurrent.Worker;
 import javafx.scene.control.TabPane;
 import org.jsoup.helper.W3CDom;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class GoogleSearch.
  */
 @SuppressWarnings("restriction")
 public class GoogleSearch {
+
+	/** The Constant ONE. */
+	private static final int ONE = 1;
+
+	/** The Constant ZERO. */
+	private static final int ZERO = 0;
 
 	/** The Constant CAPTCHA. */
 	private static final String CAPTCHA = "https://www.google.com/sorry/index";
@@ -72,6 +77,12 @@ public class GoogleSearch {
 	/** The keywords spam. */
 	private ArrayList<String> keywordsSpam;
 
+	/** The use keywords. */
+	private boolean useKeywords;
+
+	/** The use spam keywords. */
+	private boolean useSpamKeywords;
+
 	/**
 	 * Instantiates a new google search.
 	 *
@@ -85,6 +96,8 @@ public class GoogleSearch {
 		keywords = new ArrayList<String>();
 		keywordsSpam = new ArrayList<String>();
 		w3cDom = new W3CDom();
+		useKeywords = true;
+		useSpamKeywords = true;
 	}
 
 	/**
@@ -102,6 +115,10 @@ public class GoogleSearch {
 		keywords = new ArrayList<String>();
 		keywordsSpam = new ArrayList<String>();
 		w3cDom = new W3CDom();
+
+		useKeywords = true;
+		useSpamKeywords = true;
+
 	}
 
 	/**
@@ -188,28 +205,30 @@ public class GoogleSearch {
 
 		final Elements data = doc.select(".st");
 
-		if (data.size() == 0) {
+		if (data.size() == ZERO) {
 
 			obs.setResult("");
 			obs.setSemaphore(true);
 
-		} else if (data.size() > 1) {
+		} else if (data.size() > ONE) {
 			/*
 			 * final Alert alert = new Alert(AlertType.ERROR); alert.setTitle("Information Dialog");
 			 * alert.setHeaderText(null); alert.setContentText("more than one result"); alert.showAndWait(); obs.stop();
 			 */
 			obs.setSemaphore(true);
 
-			if (obs instanceof MakeShotProcess) {
-				obs.setResult(data.text());
-			} else {
-				obs.setResult(data.get(0).text());
-
-			}
+			/*
+			 * if (obs instanceof MakeShotProcess) { obs.setResult(data.text()); } else {
+			 * obs.setResult(data.get(0).text());
+			 *
+			 * }
+			 *
+			 */
+			obs.setResult(data.get(ZERO).text());
 
 		} else { // data.size() == 1
 
-			obs.setResult(data.get(0).text());
+			obs.setResult(data.get(ZERO).text());
 			obs.setSemaphore(true);
 		}
 
@@ -294,6 +313,72 @@ public class GoogleSearch {
 	 */
 	public void setSpamKeywords(final ArrayList<String> keyw) {
 		keywordsSpam = keyw;
+	}
+
+	/**
+	 * Checks if is use keywords.
+	 *
+	 * @return true, if is use keywords
+	 */
+	public boolean isUseKeywords() {
+		return useKeywords;
+	}
+
+	/**
+	 * Sets the use keywords.
+	 *
+	 * @param useKeywords the new use keywords
+	 */
+	public void setUseKeywords(final boolean useKeywords) {
+		this.useKeywords = useKeywords;
+	}
+
+	/**
+	 * Checks if is use spam keywords.
+	 *
+	 * @return true, if is use spam keywords
+	 */
+	public boolean isUseSpamKeywords() {
+		return useSpamKeywords;
+	}
+
+	/**
+	 * Sets the use spam keywords.
+	 *
+	 * @param useSpamKeywords the new use spam keywords
+	 */
+	public void setUseSpamKeywords(final boolean useSpamKeywords) {
+		this.useSpamKeywords = useSpamKeywords;
+	}
+
+	/**
+	 * Checks if is loaded spam keywords.
+	 *
+	 * @return true, if is loaded spam keywords
+	 */
+	public boolean isLoadedSpamKeywords() {
+		boolean result = false;
+
+		if (keywordsSpam != null && !keywordsSpam.isEmpty()) {
+			result = true;
+		}
+
+		return result;
+	}
+
+	/**
+	 * Checks if is loaded keywords.
+	 *
+	 * @return true, if is loaded keywords
+	 */
+	public boolean isLoadedKeywords() {
+		boolean result = false;
+
+		if (keywords != null && !keywords.isEmpty()) {
+			result = true;
+		}
+
+		return result;
 	}
 
 }

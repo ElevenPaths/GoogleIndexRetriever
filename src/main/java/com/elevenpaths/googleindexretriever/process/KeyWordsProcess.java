@@ -2,7 +2,6 @@ package com.elevenpaths.googleindexretriever.process;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -15,8 +14,6 @@ import com.elevenpaths.googleindexretriever.exceptions.EmptyQueryException;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 /**
  * The Class KeyWordsProcess.
@@ -36,9 +33,6 @@ public class KeyWordsProcess extends Observer implements Runnable {
 	/** The words processed. */
 	private final Set<String> wordsProcessed = new HashSet<String>();
 
-	/** The keywords list. */
-	private final ArrayList<String> keywordsList;
-
 	/** The start time. */
 	private final long startTime;
 
@@ -54,9 +48,6 @@ public class KeyWordsProcess extends Observer implements Runnable {
 	/** The first query. */
 	private boolean firstQuery = true;
 
-	/** The use keywords process. */
-	private final boolean useKeywordsProcess;
-
 	/** The that. */
 	private final KeyWordsProcess that;
 
@@ -69,17 +60,13 @@ public class KeyWordsProcess extends Observer implements Runnable {
 	 * @param control the control
 	 * @param gs the gs
 	 * @param query the query
-	 * @param keywords the keywords
-	 * @param useKeywords the use keywords
 	 */
-	public KeyWordsProcess(final Control control, final GoogleSearch gs, final String query,
-			final ArrayList<String> keywords, final boolean useKeywords) {
+	public KeyWordsProcess(final Control control, final GoogleSearch gs, final String query) {
 		this.control = control;
 		this.gs = gs;
 		this.query = query;
-		useKeywordsProcess = useKeywords;
 		startTime = System.nanoTime();
-		keywordsList = keywords;
+
 		that = this;
 
 		messageQueue = new ArrayBlockingQueue<String>(1);
@@ -100,26 +87,13 @@ public class KeyWordsProcess extends Observer implements Runnable {
 							gs.setQuery(message, that);
 						} catch (final UnsupportedEncodingException e) {
 							// TODO Auto-generated catch block
-
-							final Alert alert = new Alert(AlertType.ERROR);
-							alert.setTitle("Information Dialog");
-							alert.setHeaderText(null);
-							alert.setContentText("Unsupported Encoding Exception");
-							alert.showAndWait();
+							control.stop();
 
 							e.printStackTrace();
 
-							control.stop();
-
 						} catch (final EmptyQueryException e) {
-							// TODO Auto-generated catch block
-							final Alert alert = new Alert(AlertType.ERROR);
-							alert.setTitle("Information Dialog");
-							alert.setHeaderText(null);
-							alert.setContentText("Empty Query");
-							alert.showAndWait();
-
 							control.stop();
+							e.printStackTrace();
 
 						}
 					}
@@ -242,9 +216,8 @@ public class KeyWordsProcess extends Observer implements Runnable {
 			} while (!stop && !wordsFoundQueue.isEmpty());
 
 			// Starts KeyWords
-			if (useKeywordsProcess) {
-				wordsFoundQueue.addAll(keywordsList);
-				control.searchKeywords();
+			if (gs.isUseKeywords()) {
+				wordsFoundQueue.addAll(gs.getKeywords());
 
 				do {
 					try {
