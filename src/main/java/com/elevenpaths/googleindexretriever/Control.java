@@ -576,7 +576,7 @@ public class Control {
 				final Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle(App.bundle.getString("alert.title"));
 				alert.setHeaderText(null);
-				alert.setContentText(App.bundle.getString("alert.spamKeywords.error.saving"));
+				alert.setContentText(App.bundle.getString("alert.keywords.error.saving"));
 				alert.showAndWait();
 
 				e.printStackTrace();
