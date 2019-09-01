@@ -550,55 +550,36 @@ public class Control {
 		ksd.showAndWait();
 
 		if (ksd.isSave()) {
-			if (spam) {
-				gs.setSpamKeywords(ksd.getKeywords());
-				gs.setUseSpamKeywords(ksd.isUseKeywordsCheck());
+			try {
+				if (spam) {
 
-				try {
+					gs.setSpamKeywords(ksd.getKeywords());
+					gs.setUseSpamKeywords(ksd.isUseKeywordsCheck());
 
 					saveSpamKeywords();
 
-					final Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle(App.bundle.getString("alert.title"));
-					alert.setHeaderText(null);
-					alert.setContentText(App.bundle.getString("alert.save.successful"));
-					alert.showAndWait();
-
-				} catch (final IOException e) {
-
-					final Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle(App.bundle.getString("alert.title"));
-					alert.setHeaderText(null);
-					alert.setContentText(App.bundle.getString("alert.spamKeywords.error.saving"));
-					alert.showAndWait();
-
-					e.printStackTrace();
-				}
-
-			} else {
-				gs.setKeywords(ksd.getKeywords());
-				gs.setUseKeywords(ksd.isUseKeywordsCheck());
-				try {
+				} else {
+					gs.setKeywords(ksd.getKeywords());
+					gs.setUseKeywords(ksd.isUseKeywordsCheck());
 
 					saveKeywords();
-
-					final Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle(App.bundle.getString("alert.title"));
-					alert.setHeaderText(null);
-					alert.setContentText(App.bundle.getString("alert.save.successful"));
-					alert.showAndWait();
-
-				} catch (final IOException e) {
-
-					final Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle(App.bundle.getString("alert.title"));
-					alert.setHeaderText(null);
-					alert.setContentText(App.bundle.getString("alert.keywords.error.saving"));
-					alert.showAndWait();
-
-					e.printStackTrace();
 				}
 
+				final Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle(App.bundle.getString("alert.title"));
+				alert.setHeaderText(null);
+				alert.setContentText(App.bundle.getString("alert.save.successful"));
+				alert.showAndWait();
+
+			} catch (final IOException e) {
+
+				final Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle(App.bundle.getString("alert.title"));
+				alert.setHeaderText(null);
+				alert.setContentText(App.bundle.getString("alert.spamKeywords.error.saving"));
+				alert.showAndWait();
+
+				e.printStackTrace();
 			}
 
 		}
