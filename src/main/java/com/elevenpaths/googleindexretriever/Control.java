@@ -36,8 +36,10 @@ import javafx.scene.control.Alert.AlertType;
 @SuppressWarnings("restriction")
 public class Control {
 
+	/** The keywords file. */
 	public static String KEYWORDS_FILE = "keywords.txt";
 
+	/** The span keywords file. */
 	public static String SPAN_KEYWORDS_FILE = "spamKeywords.txt";
 
 	/** The Constant ZERO. */
@@ -475,67 +477,52 @@ public class Control {
 	/**
 	 * Save keywords.
 	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public void saveKeywords() {
+	public void saveKeywords() throws IOException {
 		final ArrayList<String> keywords = gs.getKeywords();
-		try {
-			final File file = new File(KEYWORDS_FILE);
-			// if file doesnt exists, then create it
-			if (!file.exists()) {
-				file.createNewFile();
-			}
 
-			final FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			final BufferedWriter bw = new BufferedWriter(fw);
-			for (final String k : keywords) {
-				bw.write(k);
-				bw.newLine();
-			}
-			bw.close();
-			fw.close();
-		} catch (final IOException e) {
-
-			final Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle(App.bundle.getString("alert.title"));
-			alert.setHeaderText(null);
-			alert.setContentText(App.bundle.getString("alert.keywords.error.saving"));
-			alert.showAndWait();
-
-			e.printStackTrace();
+		final File file = new File(KEYWORDS_FILE);
+		// if file doesnt exists, then create it
+		if (!file.exists()) {
+			file.createNewFile();
 		}
+
+		final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+		final BufferedWriter bw = new BufferedWriter(fw);
+		for (final String k : keywords) {
+			bw.write(k);
+			bw.newLine();
+		}
+		bw.close();
+		fw.close();
+
 	}
 
 	/**
 	 * Save spam keywords.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public void saveSpamKeywords() {
+	public void saveSpamKeywords() throws IOException {
 
 		final ArrayList<String> keywordsSpam = gs.getSpamKeywords();
-		try {
-			final File file = new File(SPAN_KEYWORDS_FILE);
-			// if file doesnt exists, then create it
-			if (!file.exists()) {
-				file.createNewFile();
-			}
 
-			final FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			final BufferedWriter bw = new BufferedWriter(fw);
-			for (final String k : keywordsSpam) {
-				bw.write(k);
-				bw.newLine();
-			}
-			bw.close();
-			fw.close();
-		} catch (final IOException e) {
-
-			final Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle(App.bundle.getString("alert.title"));
-			alert.setHeaderText(null);
-			alert.setContentText(App.bundle.getString("alert.spamKeywords.error.saving"));
-			alert.showAndWait();
-
-			e.printStackTrace();
+		final File file = new File(SPAN_KEYWORDS_FILE);
+		// if file doesnt exists, then create it
+		if (!file.exists()) {
+			file.createNewFile();
 		}
+
+		final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+		final BufferedWriter bw = new BufferedWriter(fw);
+		for (final String k : keywordsSpam) {
+			bw.write(k);
+			bw.newLine();
+		}
+		bw.close();
+		fw.close();
+
 	}
 
 	/**
@@ -565,20 +552,54 @@ public class Control {
 		if (ksd.isSave()) {
 			if (spam) {
 				gs.setSpamKeywords(ksd.getKeywords());
-				saveSpamKeywords();
 				gs.setUseSpamKeywords(ksd.isUseKeywordsCheck());
+
+				try {
+
+					saveSpamKeywords();
+
+					final Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle(App.bundle.getString("alert.title"));
+					alert.setHeaderText(null);
+					alert.setContentText(App.bundle.getString("alert.save.successful"));
+					alert.showAndWait();
+
+				} catch (final IOException e) {
+
+					final Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle(App.bundle.getString("alert.title"));
+					alert.setHeaderText(null);
+					alert.setContentText(App.bundle.getString("alert.spamKeywords.error.saving"));
+					alert.showAndWait();
+
+					e.printStackTrace();
+				}
 
 			} else {
 				gs.setKeywords(ksd.getKeywords());
-				saveKeywords();
 				gs.setUseKeywords(ksd.isUseKeywordsCheck());
-			}
+				try {
 
-			final Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle(App.bundle.getString("alert.title"));
-			alert.setHeaderText(null);
-			alert.setContentText(App.bundle.getString("alert.save.successful"));
-			alert.showAndWait();
+					saveKeywords();
+
+					final Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle(App.bundle.getString("alert.title"));
+					alert.setHeaderText(null);
+					alert.setContentText(App.bundle.getString("alert.save.successful"));
+					alert.showAndWait();
+
+				} catch (final IOException e) {
+
+					final Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle(App.bundle.getString("alert.title"));
+					alert.setHeaderText(null);
+					alert.setContentText(App.bundle.getString("alert.keywords.error.saving"));
+					alert.showAndWait();
+
+					e.printStackTrace();
+				}
+
+			}
 
 		}
 
