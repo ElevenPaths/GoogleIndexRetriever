@@ -549,6 +549,8 @@ public class Control {
 		}
 		ksd.showAndWait();
 
+		String erroMsg = "";
+
 		if (ksd.isSave()) {
 			try {
 				if (spam) {
@@ -556,12 +558,14 @@ public class Control {
 					gs.setSpamKeywords(ksd.getKeywords());
 					gs.setUseSpamKeywords(ksd.isUseKeywordsCheck());
 
+					erroMsg = App.bundle.getString("alert.keywords.error.saving");
 					saveSpamKeywords();
 
 				} else {
 					gs.setKeywords(ksd.getKeywords());
 					gs.setUseKeywords(ksd.isUseKeywordsCheck());
 
+					erroMsg = App.bundle.getString("alert.spamKeywords.error.saving");
 					saveKeywords();
 				}
 
@@ -576,7 +580,7 @@ public class Control {
 				final Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle(App.bundle.getString("alert.title"));
 				alert.setHeaderText(null);
-				alert.setContentText(App.bundle.getString("alert.keywords.error.saving"));
+				alert.setContentText(erroMsg);
 				alert.showAndWait();
 
 				e.printStackTrace();
