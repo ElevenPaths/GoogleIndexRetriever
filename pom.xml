@@ -45,7 +45,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                com.elevenpaths.googleindexretriever.Main
+                                com.elevenpaths.googleindexretriever.App
                             </mainClass>
                         </manifest>
                     </archive>
