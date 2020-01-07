@@ -1,237 +1,255 @@
-/*
- * This file is subject to the terms and conditions defined in
- * file 'LICENSE.txt', which is part of this source code package.
- *
- */
-
 package com.elevenpaths.googleindexretriever;
 
-import javax.swing.JDialog;
+import javafx.stage.Window;
 
-import java.awt.BorderLayout;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JList;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.BoxLayout;
-import javax.swing.SwingUtilities;
-import java.awt.Frame;
-import java.awt.Window;
-
-import javax.swing.SpringLayout;
-
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
-import javax.swing.ScrollPaneConstants;
-import javax.swing.ListSelectionModel;
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
-import javax.swing.border.EmptyBorder;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.layout.GridPane;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import javafx.scene.control.TextField;
 
+// TODO: Auto-generated Javadoc
 /**
- * Window to manage the keywords.
- *
- * @author Juan Manuel Tirado
- * @since 1.0
+ * The Class KeywordsDialog.
  */
-public class KeywordsDialog extends JDialog {
-    private ResourceBundle rb;
-    private DefaultListModel<String> listModel;
-    private JList<String> list;
-    private boolean save;
-    private JLabel totalLabel;
-    private JCheckBox keywordsCheckBox;
+@SuppressWarnings("restriction")
+public class KeywordsDialog extends Dialog<String> {
 
-    public KeywordsDialog(Frame parent, boolean modal, String title, ArrayList<String> keywords, boolean keywordsSelect) {
-        super(parent, modal);
+	/** The Constant WITHOUT_SELECTION. */
+	public static final Integer WITHOUT_SELECTION = Integer.valueOf(-1);
 
-        this.rb = ResourceBundle.getBundle("strings");
-        save = false;
-        setResizable(false);
-        setTitle(title);
-        setLocationRelativeTo(null);
+	/** The keywords. */
+	private ArrayList<String> keywords;
 
-        JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(380, 300));
-        getContentPane().add(panel, BorderLayout.CENTER);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+	/** The use keywords check. */
+	private boolean useKeywordsCheck;
 
-        listModel = new DefaultListModel<String>();
-        for (String k : keywords) {
-            listModel.addElement(k);
-        }
+	/** The save. */
+	private boolean save;
 
-        JPanel panel_2 = new JPanel();
-        panel.add(panel_2);
+	/** The spam window. */
+	private final boolean spamWindow;
 
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(260, 290));
-        panel_2.add(scrollPane);
-        scrollPane.setSize(50, 50);
-        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+	/** The selected index. */
+	private Integer selectedIndex;
 
-        list = new JList<String>(listModel);
-        list.setSize(50, 50);
-        list.setBorder(new EmptyBorder(5,7,0,5));
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.addMouseListener(new listDoubleClick());
-        scrollPane.setViewportView(list);
+	/** The that. */
+	private final KeywordsDialog that;
 
-        JPanel panel_1 = new JPanel();
-        panel.add(panel_1);
-        SpringLayout sl_panel_1 = new SpringLayout();
-        panel_1.setLayout(sl_panel_1);
+	/**
+	 * Instantiates a new keywords dialog.
+	 *
+	 * @param title the title
+	 * @param keywords the keywords
+	 * @param useKeywordsCheck the use keywords check
+	 * @param spamWindow the spam window
+	 */
+	public KeywordsDialog(final String title, final ArrayList<String> keywords, final boolean useKeywordsCheck,
+			final boolean spamWindow) {
+		super();
+		this.keywords = keywords;
+		this.useKeywordsCheck = useKeywordsCheck;
+		this.spamWindow = spamWindow;
+		save = false;
+		that = this;
+		selectedIndex = WITHOUT_SELECTION; // selected element
 
-        JButton btnSave = new JButton(rb.getString("keywords.save"));
-        sl_panel_1.putConstraint(SpringLayout.WEST, btnSave, 10,
-                SpringLayout.WEST, panel_1);
-        sl_panel_1.putConstraint(SpringLayout.SOUTH, btnSave, -10,
-                SpringLayout.SOUTH, panel_1);
-        btnSave.addActionListener(new BtnSaveListener());
-        panel_1.add(btnSave);
+		// title
+		setTitle(title);
 
-        JButton btnDelete = new JButton(rb.getString("keywords.delete"));
-        sl_panel_1.putConstraint(SpringLayout.EAST, btnSave, 0,
-                SpringLayout.EAST, btnDelete);
-        sl_panel_1.putConstraint(SpringLayout.WEST, btnDelete, 10,
-                SpringLayout.WEST, panel_1);
-        sl_panel_1.putConstraint(SpringLayout.EAST, btnDelete, -26,
-                SpringLayout.EAST, panel_1);
-        btnDelete.addActionListener(new BtnDeleteListener());
-        panel_1.add(btnDelete);
+		// icon
+		final Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image("img/xr.png"));
 
-        JButton btnAdd = new JButton(rb.getString("keywords.add"));
-        sl_panel_1.putConstraint(SpringLayout.NORTH, btnDelete, 8,
-                SpringLayout.SOUTH, btnAdd);
-        sl_panel_1.putConstraint(SpringLayout.EAST, btnAdd, 0,
-                SpringLayout.EAST, btnDelete);
-        sl_panel_1.putConstraint(SpringLayout.WEST, btnAdd, 10,
-                SpringLayout.WEST, panel_1);
-        sl_panel_1.putConstraint(SpringLayout.SOUTH, btnAdd, -267,
-                SpringLayout.SOUTH, panel_1);
-        btnAdd.addActionListener(new BtnAddListener());
-        panel_1.add(btnAdd);
+		// close button
+		final Window window = this.getDialogPane().getScene().getWindow();
+		window.setOnCloseRequest(event -> window.hide());
 
-        totalLabel = new JLabel(rb.getString("total") + keywords.size() );
+		// add content
+		getDialogPane().setContent(buildBody());
 
-        sl_panel_1.putConstraint(SpringLayout.WEST, totalLabel, 10, SpringLayout.WEST, panel_1);
-        sl_panel_1.putConstraint(SpringLayout.SOUTH, totalLabel, -6, SpringLayout.NORTH, btnSave);
-        panel_1.add(totalLabel);
+	}
 
-        keywordsCheckBox = new JCheckBox(rb.getString("keywords.use"));
-        keywordsCheckBox.setSelected(keywordsSelect);
-        sl_panel_1.putConstraint(SpringLayout.NORTH, keywordsCheckBox, 6, SpringLayout.SOUTH, btnDelete);
-        sl_panel_1.putConstraint(SpringLayout.EAST, keywordsCheckBox, -2, SpringLayout.EAST, panel_1);
-        panel_1.add(keywordsCheckBox);
+	/**
+	 * Builds the body.
+	 *
+	 * @return the grid pane
+	 */
+	private GridPane buildBody() {
 
-        pack();
-    }
+		// Creating a GridPane container
+		final GridPane root = new GridPane();
+		root.setPadding(new Insets(10, 10, 0, 10));
+		root.setVgap(5);
+		root.setHgap(5);
 
+		// Create the ListView for the keys
+		final ListView<String> keysListView = new ListView<String>();
+		// Set the Orientation of the ListView
+		keysListView.setOrientation(Orientation.VERTICAL);
+		// Set the Size of the ListView
+		keysListView.setPrefSize(380, 300);
 
-    class listDoubleClick extends MouseAdapter {
-        public void mouseClicked(MouseEvent evt) {
+		GridPane.setConstraints(keysListView, 0, 0, 4, 44);
+		root.getChildren().add(keysListView);
 
-            if (evt.getClickCount() == 2) {
-                int index = list.locationToIndex(evt.getPoint());
-                editList(listModel.getElementAt(index), index);
+		// add keys to ListView
+		keysListView.getItems().addAll(keywords);
 
-            }
-        }
-    }
+		// Defining the add row
+		final TextField newWord = new TextField();
+		newWord.setPromptText(App.bundle.getString("alert.dialog.newWord"));
+		newWord.setPrefWidth(140);
 
-    class BtnAddListener implements ActionListener {
+		final Button add = new Button(App.bundle.getString("alert.dialog.add"));
+		final Tooltip addTooltip = new Tooltip(App.bundle.getString("alert.dialog.add.tooltip"));
+		add.setTooltip(addTooltip);
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            editList("", -1);
+		final HBox addRow = new HBox(newWord, add);
+		addRow.setSpacing(5);
 
-        }
+		GridPane.setConstraints(addRow, 5, 0);
+		root.getChildren().add(addRow);
 
-    }
+		// Defining the delete button
+		final Button delete = new Button(App.bundle.getString("alert.dialog.delete"));
+		final Tooltip deleteTooltip = new Tooltip(App.bundle.getString("alert.dialog.delete.tooltip"));
+		delete.setTooltip(deleteTooltip);
+		GridPane.setConstraints(delete, 5, 1);
+		root.getChildren().add(delete);
 
-    class BtnDeleteListener implements ActionListener {
+		// Defining the useKeywords checkbox
+		final CheckBox useKeywords = new CheckBox(App.bundle.getString("alert.dialog.useKeywords"));
+		if (!spamWindow) {
+			useKeywords.setSelected(useKeywordsCheck);
+			GridPane.setConstraints(useKeywords, 5, 2);
+			root.getChildren().add(useKeywords);
+		}
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int i = list.getSelectedIndex();
-            if (i != -1) {
-                listModel.remove(i);
-                refreshTotal();
-            }
+		// Defining the total row
+		final Label total = new Label(App.bundle.getString("alert.dialog.total"));
+		final Label totalValue = new Label(String.valueOf(keywords.size()));
+		final HBox totalRow = new HBox(total, totalValue);
+		totalRow.setSpacing(5);
+		GridPane.setConstraints(totalRow, 5, 42);
+		root.getChildren().add(totalRow);
 
-        }
+		// Defining the delete button
+		final Button saveButton = new Button(App.bundle.getString("alert.dialog.save"));
+		final Tooltip saveTooltip = new Tooltip(App.bundle.getString("alert.dialog.save.tooltip"));
+		saveButton.setTooltip(saveTooltip);
+		GridPane.setConstraints(saveButton, 5, 43);
+		root.getChildren().add(saveButton);
 
-    }
+		// List View Mouse click action Listener
+		keysListView.setOnMouseClicked((event) -> {
+			selectedIndex = Integer.valueOf(keysListView.getSelectionModel().getSelectedIndex());
 
+		});
 
-    public boolean getKeywordsCheckBox() {
-        return keywordsCheckBox.isSelected();
-    }
+		// Add an ActionListener for add Button
+		add.setOnAction((event) -> {
+			final String value = newWord.getText().trim();
+			if (!value.isEmpty()) {
+				keywords.add(value);
+				keysListView.getItems().add(value);
+			}
+			totalValue.setText(String.valueOf(keywords.size()));
+			newWord.setText("");
 
-    public void setKeywordsCheckBox(boolean s) {
-        keywordsCheckBox.setSelected(s);
-    }
+		});
 
+		// Add an ActionListener for delete Button
+		delete.setOnAction((event) -> {
+			if (selectedIndex.intValue() != WITHOUT_SELECTION.intValue()) {
+				final String value = keysListView.getItems().get(selectedIndex);
+				final int index = keywords.indexOf(value);
+				keywords.remove(index);
+				keysListView.getItems().remove(selectedIndex.intValue());
+				selectedIndex = WITHOUT_SELECTION;
+				totalValue.setText(String.valueOf(keywords.size()));
 
-    public void refreshTotal() {
-        totalLabel.setText(rb.getString("total") + listModel.size());
-    }
+			}
+		});
 
-    public void close() {
-        Window window = SwingUtilities.getWindowAncestor(this);
-        window.dispose(); // System.exit(0); would work as well
-    }
+		// checkbox change listener
+		useKeywords.setOnAction((event) -> {
+			useKeywordsCheck = useKeywords.isSelected();
+		});
 
-    class BtnSaveListener implements ActionListener {
+		// Add an ActionListener for add Button
+		saveButton.setOnAction((event) -> {
+			save = true;
+			that.setResult("End");
+			that.close();
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            save = true;
-            close();
-        }
+		});
 
-    }
+		return root;
+	}
 
-    private void editList(String item, int index) {
-        // System.out.println("item: " + item + " index: " + index);
-        String s = (String) JOptionPane.showInputDialog(null,
-                rb.getString("keywords.message"),
-                rb.getString("keywords.title"), JOptionPane.PLAIN_MESSAGE,
-                null, null, item);
-        if (s != null) {
-            if (index == -1) {
-                listModel.addElement(s);
-            } else {
-                listModel.set(index, s);
-            }
-            refreshTotal();
-        }
+	/**
+	 * Checks if is save.
+	 *
+	 * @return true, if is save
+	 */
+	public boolean isSave() {
+		return save;
+	}
 
-    }
+	/**
+	 * Sets the save.
+	 *
+	 * @param save the new save
+	 */
+	public void setSave(final boolean save) {
+		this.save = save;
+	}
 
-    public ArrayList<String> getKeywordsList() {
-        ArrayList<String> keywords = new ArrayList<String>();
-        for (int i = 0; i < listModel.getSize(); i++) {
-            keywords.add(listModel.get(i));
-        }
+	/**
+	 * Gets the keywords.
+	 *
+	 * @return the keywords
+	 */
+	public ArrayList<String> getKeywords() {
+		return keywords;
+	}
 
-        return keywords;
-    }
+	/**
+	 * Sets the keywords.
+	 *
+	 * @param keywords the new keywords
+	 */
+	public void setKeywords(final ArrayList<String> keywords) {
+		this.keywords = keywords;
+	}
 
-    public boolean isSave() {
-        return save;
-    }
+	/**
+	 * Checks if is use keywords check.
+	 *
+	 * @return true, if is use keywords check
+	 */
+	public boolean isUseKeywordsCheck() {
+		return useKeywordsCheck;
+	}
 
-    public void setSave(boolean save) {
-        this.save = save;
-    }
+	/**
+	 * Sets the use keywords check.
+	 *
+	 * @param useKeywordsCheck the new use keywords check
+	 */
+	public void setUseKeywordsCheck(final boolean useKeywordsCheck) {
+		this.useKeywordsCheck = useKeywordsCheck;
+	}
+
 }
